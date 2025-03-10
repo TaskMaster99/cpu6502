@@ -137,10 +137,10 @@ inline void ABSOLUTE_INDEX_MODE(CPU6502_T* cpu, BYTE* index, BYTE* data, unsigne
 
     if(type)
     {
-        WORD PageLimit = Address + PAGE_SIZE;
+        BYTE MSB = Address >> 8;
         Address += *index;
-        if(Address >= PageLimit)
-            cpu->TOTAL_CYCLE_COUNT++;
+
+        cpu->TOTAL_CYCLE_COUNT += ((Address ^ (MSB << 8))& 0xFF00);
     
         READ_FROM_WORD_ADDRESS(cpu, &Address, data);
     }
@@ -189,10 +189,10 @@ inline void INDIRECT_Y_MODE(CPU6502_T* cpu, BYTE* data, unsigned int type)
 
     if(type)
         {
-            WORD PageLimit = Address + 0x00FF;
+            BYTE MSB = Address >> 8;
             Address += cpu->REGISTER_INDEX_Y;
-            if(Address >= PageLimit)
-                cpu->TOTAL_CYCLE_COUNT++;
+    
+            cpu->TOTAL_CYCLE_COUNT += ((Address ^ (MSB << 8))& 0xFF00);
 
             READ_FROM_WORD_ADDRESS(cpu, &Address, data);
         }
