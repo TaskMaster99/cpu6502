@@ -459,7 +459,7 @@ void RUN_CPU(CPU6502_T* cpu)
                 cpu->TOTAL_CYCLE_COUNT += 1;
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_INDEX_X == 0);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_INDEX_X >> 8) == 1) ;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_INDEX_X >> 7) == 1) ;
             }
             break;
 
@@ -469,7 +469,7 @@ void RUN_CPU(CPU6502_T* cpu)
                 cpu->TOTAL_CYCLE_COUNT += 1;
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_INDEX_Y == 0);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_INDEX_Y >> 8) == 1) ;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_INDEX_Y >> 7) == 1) ;
             }
             break;
 
@@ -479,7 +479,7 @@ void RUN_CPU(CPU6502_T* cpu)
                 cpu->TOTAL_CYCLE_COUNT += 1;
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_INDEX_X == 0);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_INDEX_X >> 8) == 1) ;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_INDEX_X >> 7) == 1) ;
             }
             break;
 
@@ -489,7 +489,7 @@ void RUN_CPU(CPU6502_T* cpu)
                 cpu->TOTAL_CYCLE_COUNT += 1;
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR == 0);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 8) == 1) ;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
             }
             break;
 
@@ -506,7 +506,7 @@ void RUN_CPU(CPU6502_T* cpu)
                 cpu->TOTAL_CYCLE_COUNT += 1;
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR == 0);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 8) == 1) ;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
             }
             break;
 
@@ -528,7 +528,7 @@ void RUN_CPU(CPU6502_T* cpu)
                 POP_FROM_STACK(cpu, PTR_ACCUMULATOR);
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR == 0);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 8) == 1) ;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
             }
             break;
 
@@ -630,6 +630,28 @@ void RUN_CPU(CPU6502_T* cpu)
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case BIT_ZERO_PAGE:
+            {
+                BYTE Mask;
+                ZERO_PAGE_MODE(cpu, &Mask, READ);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = ((cpu->REGISTER_ACCUMULATOR & Mask) != 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (Mask >> 6);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (Mask >> 7);
+            }
+            break;
+
+            case BIT_ABSOLUTE:
+            {
+                BYTE Mask;
+                ABSOLUTE_MODE(cpu, &Mask, READ);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = ((cpu->REGISTER_ACCUMULATOR & Mask) != 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (Mask >> 6);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (Mask >> 7);
             }
             break;
 

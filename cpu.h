@@ -82,7 +82,10 @@ enum                   INSTRUCTION_SET
     AND_ABSOLUTE_X  = 0x3D,
     AND_ABSOLUTE_Y  = 0x39,
     AND_INDIRECT_X  = 0x21,
-    AND_INDIRECT_Y  = 0x31
+    AND_INDIRECT_Y  = 0x31,
+
+    BIT_ZERO_PAGE   = 0x24,
+    BIT_ABSOLUTE    = 0x2C
 };
 
 typedef struct CPU6502
