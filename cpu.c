@@ -655,6 +655,182 @@ void RUN_CPU(CPU6502_T* cpu)
             }
             break;
 
+            case EOR_IMMEDIATE:
+            {
+                BYTE operand;
+                IMMEDIATE_MODE(cpu, &operand);
+                cpu->REGISTER_ACCUMULATOR ^= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case EOR_ZERO_PAGE:
+            {
+                BYTE operand;
+                ZERO_PAGE_MODE(cpu, &operand, READ);
+                cpu->REGISTER_ACCUMULATOR ^= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case EOR_ZERO_PAGE_X:
+            {
+                BYTE operand;
+                ZERO_PAGE_INDEX_MODE(cpu, PTR_X,&operand, READ);
+                cpu->REGISTER_ACCUMULATOR ^= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case EOR_ABSOLUTE:
+            {
+                BYTE operand;
+                ABSOLUTE_MODE(cpu,&operand, READ);
+                cpu->REGISTER_ACCUMULATOR ^= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case EOR_ABSOLUTE_X:
+            {
+                BYTE operand;
+                ABSOLUTE_INDEX_MODE(cpu, PTR_X,&operand, READ);
+                cpu->REGISTER_ACCUMULATOR ^= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case EOR_ABSOLUTE_Y:
+            {
+                BYTE operand;
+                ABSOLUTE_INDEX_MODE(cpu, PTR_Y,&operand, READ);
+                cpu->REGISTER_ACCUMULATOR ^= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case EOR_INDIRECT_X:
+            {
+                BYTE operand;
+                INDIRECT_X_MODE(cpu, &operand, READ);
+                cpu->REGISTER_ACCUMULATOR ^= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case EOR_INDIRECT_Y:
+            {
+                BYTE operand;
+                INDIRECT_Y_MODE(cpu, &operand, READ);
+                cpu->REGISTER_ACCUMULATOR ^= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case ORA_IMMEDIATE:
+            {
+                BYTE operand;
+                IMMEDIATE_MODE(cpu, &operand);
+                cpu->REGISTER_ACCUMULATOR |= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case ORA_ZERO_PAGE:
+            {
+                BYTE operand;
+                ZERO_PAGE_MODE(cpu, &operand, READ);
+                cpu->REGISTER_ACCUMULATOR |= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case ORA_ZERO_PAGE_X:
+            {
+                BYTE operand;
+                ZERO_PAGE_INDEX_MODE(cpu, PTR_X,&operand, READ);
+                cpu->REGISTER_ACCUMULATOR |= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case ORA_ABSOLUTE:
+            {
+                BYTE operand;
+                ABSOLUTE_MODE(cpu,&operand, READ);
+                cpu->REGISTER_ACCUMULATOR |= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case ORA_ABSOLUTE_X:
+            {
+                BYTE operand;
+                ABSOLUTE_INDEX_MODE(cpu, PTR_X,&operand, READ);
+                cpu->REGISTER_ACCUMULATOR |= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case ORA_ABSOLUTE_Y:
+            {
+                BYTE operand;
+                ABSOLUTE_INDEX_MODE(cpu, PTR_Y,&operand, READ);
+                cpu->REGISTER_ACCUMULATOR |= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case ORA_INDIRECT_X:
+            {
+                BYTE operand;
+                INDIRECT_X_MODE(cpu, &operand, READ);
+                cpu->REGISTER_ACCUMULATOR |= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
+            case ORA_INDIRECT_Y:
+            {
+                BYTE operand;
+                INDIRECT_Y_MODE(cpu, &operand, READ);
+                cpu->REGISTER_ACCUMULATOR |= operand;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = ((cpu->REGISTER_ACCUMULATOR >> 7) == 1) ;
+            }
+            break;
+
             default:
                 break;
         }
