@@ -831,6 +831,264 @@ void RUN_CPU(CPU6502_T* cpu)
             }
             break;
 
+            case ADC_IMMEDIATE:
+            {
+                BYTE operand;
+                IMMEDIATE_MODE(cpu, &operand);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+
+            }
+            break;
+
+            case ADC_ZERO_PAGE:
+            {
+                BYTE operand;
+                ZERO_PAGE_MODE(cpu, &operand, READ);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+            }
+            break;
+
+            case ADC_ZERO_PAGE_X:
+            {
+                BYTE operand;
+                ZERO_PAGE_INDEX_MODE(cpu, &cpu->REGISTER_INDEX_X,&operand, READ);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+            }
+            break;
+
+            case ADC_ABSOLUTE:
+            {
+                BYTE operand;
+                ABSOLUTE_MODE(cpu, &operand, READ);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+            }
+            break;
+
+            case ADC_ABSOLUTE_X:
+            {
+                BYTE operand;
+                ABSOLUTE_INDEX_MODE(cpu, &cpu->REGISTER_INDEX_X, &operand, READ);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+            }
+            break;
+
+            case ADC_ABSOLUTE_Y:
+            {
+                BYTE operand;
+                ABSOLUTE_INDEX_MODE(cpu, &cpu->REGISTER_INDEX_Y, &operand, READ);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+            }
+            break;
+
+            case ADC_INDIRECT_X:
+            {
+                BYTE operand;
+                INDIRECT_X_MODE(cpu, &operand, READ);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+            }
+            break;
+            
+            case ADC_INDIRECT_Y:
+            {
+                BYTE operand;
+                INDIRECT_Y_MODE(cpu, &operand, READ);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+            }
+            break;
+
+            case SBC_IMMEDIATE:
+            {
+                BYTE operand;
+                IMMEDIATE_MODE(cpu, &operand);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+
+            }
+            break;
+
+            case SBC_ZERO_PAGE:
+            {
+                BYTE operand;
+                ZERO_PAGE_MODE(cpu, &operand, READ);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+            }
+            break;
+
+            case SBC_ZERO_PAGE_X:
+            {
+                BYTE operand;
+                ZERO_PAGE_INDEX_MODE(cpu, &cpu->REGISTER_INDEX_X,&operand, READ);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+            }
+            break;
+
+            case SBC_ABSOLUTE:
+            {
+                BYTE operand;
+                ABSOLUTE_MODE(cpu, &operand, READ);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+            }
+            break;
+
+            case SBC_ABSOLUTE_X:
+            {
+                BYTE operand;
+                ABSOLUTE_INDEX_MODE(cpu, &cpu->REGISTER_INDEX_X, &operand, READ);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+            }
+            break;
+
+            case SBC_ABSOLUTE_Y:
+            {
+                BYTE operand;
+                ABSOLUTE_INDEX_MODE(cpu, &cpu->REGISTER_INDEX_Y, &operand, READ);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+            }
+            break;
+
+            case SBC_INDIRECT_X:
+            {
+                BYTE operand;
+                INDIRECT_X_MODE(cpu, &operand, READ);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+            }
+            break;
+            
+            case SBC_INDIRECT_Y:
+            {
+                BYTE operand;
+                INDIRECT_Y_MODE(cpu, &operand, READ);
+
+                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+
+                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
+                cpu->REGISTER_ACCUMULATOR = temp1;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+            }
+            break;            
+
             default:
                 break;
         }
