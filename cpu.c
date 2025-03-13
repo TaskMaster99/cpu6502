@@ -1139,6 +1139,160 @@ void RUN_CPU(CPU6502_T* cpu)
             }
             break;            
 
+            case CMP_IMMEDIATE:
+            {
+                BYTE OperandAddress;
+                IMMEDIATE_MODE(&cpu, &OperandAddress);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= cpu->MEMORY[OperandAddress]);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == cpu->MEMORY[OperandAddress]);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+            }
+            break;
+
+            case CMP_ZERO_PAGE:
+            {
+                BYTE Operand;
+                ZERO_PAGE_MODE(&cpu, &Operand, READ);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+            }
+            break;
+
+            case CMP_ZERO_PAGE_X:
+            {
+                BYTE Operand;
+                ZERO_PAGE_INDEX_MODE(&cpu, PTR_X, &Operand, READ);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+            }
+            break;
+
+            case CMP_ABSOLUTE:
+            {
+                BYTE Operand;
+                ABSOLUTE_MODE(&cpu, &Operand, READ);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+            }
+            break;
+
+            case CMP_ABSOLUTE_X:
+            {
+                BYTE Operand;
+                ABSOLUTE_INDEX_MODE(&cpu, PTR_X, &Operand, READ);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+            }
+            break;
+
+            case CMP_ABSOLUTE_Y:
+            {
+                BYTE Operand;
+                ABSOLUTE_INDEX_MODE(&cpu, PTR_Y, &Operand, READ);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+            }
+            break;
+
+            case CMP_INDIRECT_X:
+            {
+                BYTE Operand;
+                INDIRECT_X_MODE(&cpu, &Operand, READ);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+            }
+            break;
+
+            case CMP_INDIRECT_Y:
+            {
+                BYTE Operand;
+                INDIRECT_Y_MODE(&cpu, &Operand, READ);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+            }
+            break;
+
+            case CPX_IMMEDIATE:
+            {
+                BYTE OperandAddress;
+                IMMEDIATE_MODE(&cpu, &OperandAddress);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_INDEX_X >= cpu->MEMORY[OperandAddress]);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_INDEX_X == cpu->MEMORY[OperandAddress]);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_X >> 7);
+            }
+            break;
+
+            case CPX_ZERO_PAGE:
+            {
+                BYTE Operand;
+                ZERO_PAGE_MODE(&cpu, &Operand, READ);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_INDEX_X >= Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_INDEX_X == Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_X >> 7);
+            }
+            break;
+
+            case CPX_ABSOLUTE:
+            {
+                BYTE Operand;
+                ABSOLUTE_MODE(&cpu, &Operand, READ);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_INDEX_X >= Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_INDEX_X == Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_X >> 7);
+            }
+            break;
+
+            case CPY_IMMEDIATE:
+            {
+                BYTE OperandAddress;
+                IMMEDIATE_MODE(&cpu, &OperandAddress);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_INDEX_Y >= cpu->MEMORY[OperandAddress]);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_INDEX_Y == cpu->MEMORY[OperandAddress]);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_Y >> 7);
+            }
+            break;
+
+            case CPY_ZERO_PAGE:
+            {
+                BYTE Operand;
+                ZERO_PAGE_MODE(&cpu, &Operand, READ);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_INDEX_Y >= Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_INDEX_Y == Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_Y >> 7);
+            }
+            break;
+
+            case CPY_ABSOLUTE:
+            {
+                BYTE Operand;
+                ABSOLUTE_MODE(&cpu, &Operand, READ);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_INDEX_Y >= Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_INDEX_Y == Operand);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_Y >> 7);
+            }
+            break;  
+
             default:
                 break;
         }
