@@ -836,14 +836,22 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 IMMEDIATE_MODE(cpu, &operand);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+                printf("operand = 0x%04x.\n", cpu->MEMORY[operand]);
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+
+                WORD result = cpu->REGISTER_ACCUMULATOR + cpu->MEMORY[operand] + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+
+
+                printf("value = 0x%04x.\n", result);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (result > 0xFF);
+                cpu->REGISTER_ACCUMULATOR = result;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ cpu->MEMORY[operand]) & (a ^ result) & 0x80)>> 7);
+
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
 
             }
             break;
@@ -853,14 +861,20 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 ZERO_PAGE_MODE(cpu, &operand, READ);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
+                printf("operand = 0x%04x.\n", operand);
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+                WORD result = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                printf("value = 0x%04x.\n", result);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (result > 0xFF);
+                cpu->REGISTER_ACCUMULATOR = result;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ operand) & (a ^ result) & 0x80)>> 7);
+
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+
             }
             break;
 
@@ -869,14 +883,17 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 ZERO_PAGE_INDEX_MODE(cpu, &cpu->REGISTER_INDEX_X,&operand, READ);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+                WORD result = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (result > 255);
+                cpu->REGISTER_ACCUMULATOR = result;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ operand) & (a ^ result) & 0x80)>> 7);
+
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
             }
             break;
 
@@ -885,14 +902,16 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 ABSOLUTE_MODE(cpu, &operand, READ);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+                WORD result = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (result > 255);
+                cpu->REGISTER_ACCUMULATOR = result;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ operand) & (a ^ result) & 0x80)>> 7);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+
             }
             break;
 
@@ -901,14 +920,15 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 ABSOLUTE_INDEX_MODE(cpu, &cpu->REGISTER_INDEX_X, &operand, READ);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+                WORD result = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (result > 255);
+                cpu->REGISTER_ACCUMULATOR = result;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ operand) & (a ^ result) & 0x80)>> 7);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
             }
             break;
 
@@ -917,14 +937,16 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 ABSOLUTE_INDEX_MODE(cpu, &cpu->REGISTER_INDEX_Y, &operand, READ);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+                WORD result = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (result > 255);
+                cpu->REGISTER_ACCUMULATOR = result;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ operand) & (a ^ result) & 0x80)>> 7);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+
             }
             break;
 
@@ -933,14 +955,16 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 INDIRECT_X_MODE(cpu, &operand, READ);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+                WORD result = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (result > 255);
+                cpu->REGISTER_ACCUMULATOR = result;
+                                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ operand) & (a ^ result) & 0x80)>> 7);
+
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
             }
             break;
             
@@ -949,14 +973,17 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 INDIRECT_Y_MODE(cpu, &operand, READ);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+                WORD result = cpu->REGISTER_ACCUMULATOR + operand + cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (result > 255);
+                cpu->REGISTER_ACCUMULATOR = result;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ operand) & (a ^ result) & 0x80)>> 7);
+
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+
             }
             break;
 
@@ -965,14 +992,16 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 IMMEDIATE_MODE(cpu, &operand);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+                WORD result = cpu->REGISTER_ACCUMULATOR - cpu->MEMORY[operand] - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = !(result > 255);
+                cpu->REGISTER_ACCUMULATOR = result;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ operand) & (a ^ result) & 0x80)>> 7);
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
 
             }
             break;
@@ -982,14 +1011,18 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 ZERO_PAGE_MODE(cpu, &operand, READ);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+                WORD result = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+                printf("result = 0x%04x.\n", result);
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = !(result > 255);
+                cpu->REGISTER_ACCUMULATOR = result;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ operand) & (a ^ result) & 0x80)>> 7);
+
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+
             }
             break;
 
@@ -998,14 +1031,17 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 ZERO_PAGE_INDEX_MODE(cpu, &cpu->REGISTER_INDEX_X,&operand, READ);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+                WORD result = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = !(result > 255);
+                cpu->REGISTER_ACCUMULATOR = result;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ operand) & (a ^ result) & 0x80)>> 7);
+
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+
             }
             break;
 
@@ -1014,14 +1050,17 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 ABSOLUTE_MODE(cpu, &operand, READ);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+                WORD result = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = !(result > 255);
+                cpu->REGISTER_ACCUMULATOR = result;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ operand) & (a ^ result) & 0x80)>> 7);
+
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+
             }
             break;
 
@@ -1030,14 +1069,17 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 ABSOLUTE_INDEX_MODE(cpu, &cpu->REGISTER_INDEX_X, &operand, READ);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+                WORD result = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = !(result > 255);
+                cpu->REGISTER_ACCUMULATOR = result;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ operand) & (a ^ result) & 0x80)>> 7);
+
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+
             }
             break;
 
@@ -1046,14 +1088,17 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 ABSOLUTE_INDEX_MODE(cpu, &cpu->REGISTER_INDEX_Y, &operand, READ);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+                WORD result = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = !(result > 255);
+                cpu->REGISTER_ACCUMULATOR = result;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ operand) & (a ^ result) & 0x80)>> 7);
+
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+
             }
             break;
 
@@ -1062,14 +1107,17 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 INDIRECT_X_MODE(cpu, &operand, READ);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+                WORD result = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = !(result > 255);
+                cpu->REGISTER_ACCUMULATOR = result;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ operand) & (a ^ result) & 0x80)>> 7);
+
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+
             }
             break;
             
@@ -1078,14 +1126,16 @@ void RUN_CPU(CPU6502_T* cpu)
                 BYTE operand;
                 INDIRECT_Y_MODE(cpu, &operand, READ);
 
-                BYTE temp0 = cpu->REGISTER_ACCUMULATOR ;
+                BYTE a = cpu->REGISTER_ACCUMULATOR ;
 
-                WORD temp1 = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
+                WORD result = cpu->REGISTER_ACCUMULATOR - operand - (1 - cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY );
 
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (temp1 > 255);
-                cpu->REGISTER_ACCUMULATOR = temp1;
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = ((temp0 ^ temp1) & (operand ^ temp1) & 0x80);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = !(result > 255);
+                cpu->REGISTER_ACCUMULATOR = result;
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW = (((a ^ operand) & (a ^ result) & 0x80)>> 7);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+
             }
             break;            
 

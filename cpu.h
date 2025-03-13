@@ -20,7 +20,7 @@
 
 typedef unsigned char  BYTE;  // 1 byte => 8  bits
 typedef unsigned short WORD;  // 2 byte => 16 bits
-typedef unsigned int   DWORD; // 4 byte => 32 bits
+typedef int            DWORD; // 4 byte => 32 bits
 
 
 
@@ -229,13 +229,13 @@ typedef struct CPU6502
     {
         struct STATUS_FLAGS
         {
-            unsigned int CARRY:1;
-            unsigned int ZERO:1;
-            unsigned int INTERRUPT_DISABLE:1;
-            unsigned int DECIMAL_MODE:1;
-            unsigned int BREAK_COMMAND:1;
-            unsigned int OVERFLOW:1;
-            unsigned int NEGATIVE:1;
+            BYTE CARRY:1;
+            BYTE ZERO:1;
+            BYTE INTERRUPT_DISABLE:1;
+            BYTE DECIMAL_MODE:1;
+            BYTE BREAK_COMMAND:1;
+            BYTE OVERFLOW:1;
+            BYTE NEGATIVE:1;
         }STATUS_FLAGS_T;
         
         BYTE   REGISTER_STATUS;

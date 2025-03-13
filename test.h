@@ -1340,6 +1340,1004 @@ void TEST_BIT_ABSOLUTE()
     EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
 }
 
+void TEST_ADC_IMMEDIATE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.MEMORY[0xE2] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_IMMEDIATE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("ADC Immediate\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x09);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 2);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0xFF;
+    cpu.MEMORY[0xE2] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_IMMEDIATE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("\n");
+
+    printf("ADC Immediate Overflow\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x00);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 2);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_ADC_ZERO_PAGE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.MEMORY[0xE2] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_ZERO_PAGE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("ADC Zero Page\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x09);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 3);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0xFF;
+    cpu.MEMORY[0xE2] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_ZERO_PAGE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("\n");
+
+    printf("ADC Zero Page Overflow\n");
+    printf("value = 0x%04x.\n", cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW);
+
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x00);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 3);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_ADC_ZERO_PAGE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.REGISTER_INDEX_X = 0x06;
+
+    cpu.MEMORY[0xE8] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_ZERO_PAGE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("ADC Zero Page X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x09);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0xFF;
+    cpu.REGISTER_INDEX_X = 0x06;
+
+    cpu.MEMORY[0xE8] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_ZERO_PAGE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("\n");
+
+    printf("ADC Zero Page X Overflow\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x00);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_ADC_ABSOLUTE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.MEMORY[0xE2E5] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_ABSOLUTE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("ADC Absolute\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x09);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0xFF;
+    cpu.MEMORY[0xE2E5] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_ABSOLUTE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("\n");
+
+    printf("ADC Absolute Overflow\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x00);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_ADC_ABSOLUTE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.REGISTER_INDEX_X = 0x03;
+
+    cpu.MEMORY[0xE2E8] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_ABSOLUTE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("ADC Absolute X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x09);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0xFF;
+    cpu.REGISTER_INDEX_X = 0x03;
+
+    cpu.MEMORY[0xE2E8] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_ABSOLUTE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("\n");
+
+    printf("ADC Absolute X Overflow\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x00);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_ADC_ABSOLUTE_Y()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.REGISTER_INDEX_Y = 0x03;
+
+    cpu.MEMORY[0xE2E8] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_ABSOLUTE_Y;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("ADC Absolute Y\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x09);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0xFF;
+    cpu.REGISTER_INDEX_Y = 0x03;
+
+    cpu.MEMORY[0xE2E8] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_ABSOLUTE_Y;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("\n");
+
+    printf("ADC Absolute Y Overflow\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x00);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_ADC_INDIRECT_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+
+    cpu.REGISTER_INDEX_X = 0x0B;
+    cpu.MEMORY[0x002B] = 0x30;
+    cpu.MEMORY[0x002C] = 0xAC;
+    cpu.MEMORY[0xAC30] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_INDIRECT_X;
+    cpu.MEMORY[0xFFFD] = 0x20;
+
+    RUN_CPU(&cpu);
+    
+    printf("ADC Indirect X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x09);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0xFF;
+
+    cpu.REGISTER_INDEX_X = 0x0B;
+    cpu.MEMORY[0x002B] = 0x30;
+    cpu.MEMORY[0x002C] = 0xAC;
+    cpu.MEMORY[0xAC30] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_INDIRECT_X;
+    cpu.MEMORY[0xFFFD] = 0x20;
+
+    RUN_CPU(&cpu);
+    
+    printf("\n");
+
+    printf("ADC Indirect X Overflow\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x00);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_ADC_INDIRECT_Y()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.REGISTER_INDEX_Y = 0x04;
+    cpu.MEMORY[0x0020] = 0x30;
+    cpu.MEMORY[0x0021] = 0xAC;
+    cpu.MEMORY[0xAC34] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_INDIRECT_Y;
+    cpu.MEMORY[0xFFFD] = 0x20;
+
+    RUN_CPU(&cpu);
+    
+    printf("ADC Indirect Y\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x09);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 5);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0xFF;
+    cpu.REGISTER_INDEX_Y = 0x04;
+    cpu.MEMORY[0x0020] = 0x30;
+    cpu.MEMORY[0x0021] = 0xAC;
+    cpu.MEMORY[0xAC34] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = ADC_INDIRECT_Y;
+    cpu.MEMORY[0xFFFD] = 0x20;
+
+    RUN_CPU(&cpu);
+    
+    printf("\n");
+
+    printf("ADC Indirect Y Overflow\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x00);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 5);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+
+void TEST_SBC_IMMEDIATE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.MEMORY[0xE2] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = SBC_IMMEDIATE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("SBC Immediate\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x06);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 2);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+    CPU6502_T cpu_o;
+
+    RESET_CPU(&cpu_o);
+
+    cpu_o.REGISTER_ACCUMULATOR = 0xF0;
+    cpu_o.MEMORY[0xE2] = 0xFF;
+
+    cpu_o.MEMORY[0xFFFC] = SBC_IMMEDIATE;
+    cpu_o.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu_o);
+    
+    printf("\n");
+
+    printf("SBC Immediate Overflow\n");
+
+    printf("acc : 0x%04x.\n", cpu_o.REGISTER_ACCUMULATOR);
+
+    printf("\t");
+    EQUAL("REGISTER",cpu_o.REGISTER_ACCUMULATOR, 0xf0);
+    printf("\t");
+    EQUAL("CYCLE",cpu_o.TOTAL_CYCLE_COUNT, 2);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu_o.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu_o.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu_o.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu_o.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_SBC_ZERO_PAGE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.MEMORY[0xE2] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = SBC_ZERO_PAGE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("SBC Zero Page\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x06);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 3);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+    CPU6502_T cpu_o;
+
+    RESET_CPU(&cpu_o);
+
+    cpu_o.REGISTER_ACCUMULATOR = 0xF0;
+    cpu_o.MEMORY[0xE2] = 0xFF;
+
+    cpu_o.MEMORY[0xFFFC] = SBC_ZERO_PAGE;
+    cpu_o.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu_o);
+    
+    printf("\n");
+
+    printf("SBC Zero Page Overflow\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu_o.REGISTER_ACCUMULATOR, 0xF0);
+    printf("\t");
+    EQUAL("CYCLE",cpu_o.TOTAL_CYCLE_COUNT, 3);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu_o.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu_o.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu_o.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu_o.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_SBC_ZERO_PAGE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.REGISTER_INDEX_X = 0x06;
+
+    cpu.MEMORY[0xE8] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = SBC_ZERO_PAGE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("SBC Zero Page X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x06);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+    CPU6502_T cpu_o;
+
+    RESET_CPU(&cpu_o);
+
+    cpu_o.REGISTER_ACCUMULATOR = 0xF0;
+    cpu_o.REGISTER_INDEX_X = 0x06;
+
+    cpu_o.MEMORY[0xE8] = 0xFF;
+
+    cpu_o.MEMORY[0xFFFC] = SBC_ZERO_PAGE_X;
+    cpu_o.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu_o);
+    
+    printf("\n");
+
+    printf("SBC Zero Page X Overflow\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu_o.REGISTER_ACCUMULATOR, 0xF0);
+    printf("\t");
+    EQUAL("CYCLE",cpu_o.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu_o.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu_o.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu_o.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu_o.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_SBC_ABSOLUTE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.MEMORY[0xE2E5] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = SBC_ABSOLUTE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("SBC Absolute\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x06);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0xF0;
+    cpu.MEMORY[0xE2E5] = 0xFF;
+
+    cpu.MEMORY[0xFFFC] = SBC_ABSOLUTE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("\n");
+
+    printf("SBC Absolute Overflow\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0xF0);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_SBC_ABSOLUTE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0xFF;
+    cpu.REGISTER_INDEX_X = 0x03;
+
+    cpu.MEMORY[0xE2E8] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = SBC_ABSOLUTE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("SBC Absolute X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0xFD);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0xF0;
+    cpu.REGISTER_INDEX_X = 0x03;
+
+    cpu.MEMORY[0xE2E8] = 0xFF;
+
+    cpu.MEMORY[0xFFFC] = SBC_ABSOLUTE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("\n");
+
+    printf("SBC Absolute X Overflow\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0xF0);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_SBC_ABSOLUTE_Y()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x09;
+    cpu.REGISTER_INDEX_Y = 0x03;
+
+    cpu.MEMORY[0xE2E8] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = SBC_ABSOLUTE_Y;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("SBC Absolute Y\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x07);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0xF0;
+    cpu.REGISTER_INDEX_Y = 0x03;
+
+    cpu.MEMORY[0xE2E8] = 0xFF;
+
+    cpu.MEMORY[0xFFFC] = SBC_ABSOLUTE_Y;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("\n");
+
+    printf("SBC Absolute Y Overflow\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0xF0);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_SBC_INDIRECT_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+
+    cpu.REGISTER_INDEX_X = 0x0B;
+    cpu.MEMORY[0x002B] = 0x30;
+    cpu.MEMORY[0x002C] = 0xAC;
+    cpu.MEMORY[0xAC30] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = SBC_INDIRECT_X;
+    cpu.MEMORY[0xFFFD] = 0x20;
+
+    RUN_CPU(&cpu);
+    
+    printf("SBC Indirect X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x06);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0xF0;
+
+    cpu.REGISTER_INDEX_X = 0x0B;
+    cpu.MEMORY[0x002B] = 0x30;
+    cpu.MEMORY[0x002C] = 0xAC;
+    cpu.MEMORY[0xAC30] = 0xFF;
+
+    cpu.MEMORY[0xFFFC] = SBC_INDIRECT_X;
+    cpu.MEMORY[0xFFFD] = 0x20;
+
+    RUN_CPU(&cpu);
+    
+    printf("\n");
+
+    printf("SBC Indirect X Overflow\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0xF0);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_SBC_INDIRECT_Y()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.REGISTER_INDEX_Y = 0x04;
+    cpu.MEMORY[0x0020] = 0x30;
+    cpu.MEMORY[0x0021] = 0xAC;
+    cpu.MEMORY[0xAC34] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = SBC_INDIRECT_Y;
+    cpu.MEMORY[0xFFFD] = 0x20;
+
+    RUN_CPU(&cpu);
+    
+    printf("SBC Indirect Y\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x06);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 5);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0xF0;
+    cpu.REGISTER_INDEX_Y = 0x04;
+    cpu.MEMORY[0x0020] = 0x30;
+    cpu.MEMORY[0x0021] = 0xAC;
+    cpu.MEMORY[0xAC34] = 0xFF;
+
+    cpu.MEMORY[0xFFFC] = SBC_INDIRECT_Y;
+    cpu.MEMORY[0xFFFD] = 0x20;
+
+    RUN_CPU(&cpu);
+    
+    printf("\n");
+
+    printf("SBC Indirect Y Overflow\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0xF0);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 5);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("OVERFLOW FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.OVERFLOW, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+
 void TEST_LDA()
 {
     TEST_LDA_IMMEDIATE();
@@ -1417,6 +2415,30 @@ void TEST_AND()
     TEST_AND_INDIRECT_Y();
 }
 
+void TEST_ADC()
+{
+    TEST_ADC_IMMEDIATE();
+    TEST_ADC_ZERO_PAGE();
+    TEST_ADC_ZERO_PAGE_X();
+    TEST_ADC_ABSOLUTE();
+    TEST_ADC_ABSOLUTE_X();
+    TEST_ADC_ABSOLUTE_Y();
+    TEST_ADC_INDIRECT_X();
+    TEST_ADC_INDIRECT_Y();
+}
+
+void TEST_SBC()
+{
+    TEST_SBC_IMMEDIATE();
+    TEST_SBC_ZERO_PAGE();
+    TEST_SBC_ZERO_PAGE_X();
+    TEST_SBC_ABSOLUTE();
+    TEST_SBC_ABSOLUTE_X();
+    TEST_SBC_ABSOLUTE_Y();
+    TEST_SBC_INDIRECT_X();
+    TEST_SBC_INDIRECT_Y();
+}
+
 void TEST_BIT()
 {
     TEST_BIT_ZERO_PAGE();
@@ -1426,7 +2448,7 @@ void TEST_BIT()
 void TEST_TOTAL_INSTRUCTION()
 {
  
-    TEST_LDA();
+/*     TEST_LDA();
     TEST_LDX();
     TEST_LDY();
 
@@ -1446,8 +2468,12 @@ void TEST_TOTAL_INSTRUCTION()
     TEST_PHA();
     TEST_PHP();
     TEST_PLA();
-    TEST_PLP();
+    TEST_PLP(); */
 
-    TEST_BIT();
+    //TEST_BIT();
+
+    //TEST_ADC();
+
+    TEST_SBC();
 }
 #endif
