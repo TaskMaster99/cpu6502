@@ -2338,6 +2338,1226 @@ void TEST_SBC_INDIRECT_Y()
 }
 
 
+void TEST_CMP_IMMEDIATE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.MEMORY[0xE2] = 0x08;
+
+    cpu.MEMORY[0xFFFC] = CMP_IMMEDIATE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("CMP Immediate\n");
+
+
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 2);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+ 
+}
+
+void TEST_CMP_ZERO_PAGE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.MEMORY[0xE2] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = CMP_ZERO_PAGE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("CMP Zero Page\n");
+
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 3);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_CMP_ZERO_PAGE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.REGISTER_INDEX_X = 0x06;
+
+    cpu.MEMORY[0xE8] = 0x10;
+
+    cpu.MEMORY[0xFFFC] = CMP_ZERO_PAGE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("CMP Zero Page X\n");
+
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_CMP_ABSOLUTE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.MEMORY[0xE2E5] = 0xF1;
+
+    cpu.MEMORY[0xFFFC] = CMP_ABSOLUTE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("CMP Absolute\n");
+
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_CMP_ABSOLUTE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x01;
+    cpu.REGISTER_INDEX_X = 0x03;
+
+    cpu.MEMORY[0xE2E8] = 0xFF;
+
+    cpu.MEMORY[0xFFFC] = CMP_ABSOLUTE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("CMP Absolute X\n");
+
+
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_CMP_ABSOLUTE_Y()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x09;
+    cpu.REGISTER_INDEX_Y = 0x03;
+
+    cpu.MEMORY[0xE2E8] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = CMP_ABSOLUTE_Y;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("CMP Absolute Y\n");
+
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_CMP_INDIRECT_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+
+    cpu.REGISTER_INDEX_X = 0x0B;
+    cpu.MEMORY[0x002B] = 0x30;
+    cpu.MEMORY[0x002C] = 0xAC;
+    cpu.MEMORY[0xAC30] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = CMP_INDIRECT_X;
+    cpu.MEMORY[0xFFFD] = 0x20;
+
+    RUN_CPU(&cpu);
+    
+    printf("CMP Indirect X\n");
+
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_CMP_INDIRECT_Y()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x08;
+    cpu.REGISTER_INDEX_Y = 0x04;
+    cpu.MEMORY[0x0020] = 0x30;
+    cpu.MEMORY[0x0021] = 0xAC;
+    cpu.MEMORY[0xAC34] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = CMP_INDIRECT_Y;
+    cpu.MEMORY[0xFFFD] = 0x20;
+
+    RUN_CPU(&cpu);
+    
+    printf("CMP Indirect Y\n");
+
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 5);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+
+}
+
+
+void TEST_CPX_IMMEDIATE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_INDEX_X = 0x08;
+    cpu.MEMORY[0xE2] = 0x08;
+
+    cpu.MEMORY[0xFFFC] = CPX_IMMEDIATE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("CPX Immediate\n");
+
+
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 2);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+ 
+}
+
+void TEST_CPX_ZERO_PAGE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_INDEX_X = 0x08;
+    cpu.MEMORY[0xE2] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = CPX_ZERO_PAGE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("CPX Zero Page\n");
+
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 3);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_CPX_ABSOLUTE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_INDEX_X = 0x08;
+    cpu.MEMORY[0xE2E5] = 0xF1;
+
+    cpu.MEMORY[0xFFFC] = CPX_ABSOLUTE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("CPX Absolute\n");
+
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_CPY_IMMEDIATE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_INDEX_Y = 0x08;
+    cpu.MEMORY[0xE2] = 0x08;
+
+    cpu.MEMORY[0xFFFC] = CPY_IMMEDIATE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("CPY Immediate\n");
+
+
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 2);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+ 
+}
+
+void TEST_CPY_ZERO_PAGE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_INDEX_Y = 0x08;
+    cpu.MEMORY[0xE2] = 0x01;
+
+    cpu.MEMORY[0xFFFC] = CPY_ZERO_PAGE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("CPY Zero Page\n");
+
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 3);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_CPY_ABSOLUTE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_INDEX_Y = 0x08;
+    cpu.MEMORY[0xE2E5] = 0xF1;
+
+    cpu.MEMORY[0xFFFC] = CPY_ABSOLUTE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("CPY Absolute\n");
+
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 4);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_DEC_ZERO_PAGE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE2] = 0xF1;
+
+    cpu.MEMORY[0xFFFC] = DEC_ZERO_PAGE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("DEC Zero Page\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE2], 0xF0);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 5);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_DEC_ZERO_PAGE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE5] = 0xF1;
+    cpu.REGISTER_INDEX_X = 0x03;
+
+    cpu.MEMORY[0xFFFC] = DEC_ZERO_PAGE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("DEC Zero Page X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE5], 0xF0);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_DEC_ABSOLUTE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE2E5] = 0xF1;
+
+    cpu.MEMORY[0xFFFC] = DEC_ABSOLUTE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("DEC Absolute\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE2E5], 0xF0);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_DEC_ABSOLUTE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE2E8] = 0x01;
+    cpu.REGISTER_INDEX_X = 0x03;
+
+    cpu.MEMORY[0xFFFC] = DEC_ABSOLUTE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("DEC Absolute X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE2E8], 0x00);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 7);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+
+void TEST_INC_ZERO_PAGE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE2] = 0xF1;
+
+    cpu.MEMORY[0xFFFC] = INC_ZERO_PAGE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("INC Zero Page\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE2], 0xF2);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 5);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_INC_ZERO_PAGE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE5] = 0xF1;
+    cpu.REGISTER_INDEX_X = 0x03;
+
+    cpu.MEMORY[0xFFFC] = INC_ZERO_PAGE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("INC Zero Page X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE5], 0xF2);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_INC_ABSOLUTE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE2E5] = 0xF1;
+
+    cpu.MEMORY[0xFFFC] = INC_ABSOLUTE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("INC Absolute\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE2E5], 0xF2);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_INC_ABSOLUTE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE2E8] = 0x01;
+    cpu.REGISTER_INDEX_X = 0x03;
+
+    cpu.MEMORY[0xFFFC] = INC_ABSOLUTE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("INC Absolute X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE2E8], 0x02);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 7);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0);
+}
+
+void TEST_INX_IMPLIED()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_INDEX_X = 0xF1;
+
+    cpu.MEMORY[0xFFFC] = INX_IMPLIED;
+
+    RUN_CPU(&cpu);
+    
+    printf("INX Implied\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_INDEX_X, 0xF2);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 2);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_INY_IMPLIED()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_INDEX_Y = 0xF1;
+
+    cpu.MEMORY[0xFFFC] = INY_IMPLIED;
+
+    RUN_CPU(&cpu);
+    
+    printf("INY Implied\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_INDEX_Y, 0xF2);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 2);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1);
+}
+
+void TEST_ASL_ACCUMULATOR()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x80;
+
+    cpu.MEMORY[0xFFFC] = ASL_ACCUMULATOR;
+
+    RUN_CPU(&cpu);
+    
+    printf("ASL Accumulator\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x00);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 2);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+void TEST_ASL_ZERO_PAGE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE2] = 0x80;
+
+    cpu.MEMORY[0xFFFC] = ASL_ZERO_PAGE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("ASL Zero Page\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE2], 0x00);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 5);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+void TEST_ASL_ZERO_PAGE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE5] = 0x80;
+    cpu.REGISTER_INDEX_X = 0x03;
+
+    cpu.MEMORY[0xFFFC] = ASL_ZERO_PAGE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("ASL Zero Page X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE5], 0x00);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+
+void TEST_ASL_ABSOLUTE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE2E5] = 0x0A;
+
+    cpu.MEMORY[0xFFFC] = ASL_ABSOLUTE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("ASL Absolute\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE2E5], 0x14);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+void TEST_ASL_ABSOLUTE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE2E8] = 0x30;
+    cpu.REGISTER_INDEX_X = 0x03;
+
+    cpu.MEMORY[0xFFFC] = ASL_ABSOLUTE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("ASL Absolute X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE2E8], 0x60);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 7);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 1);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+
+
+void TEST_LSR_ACCUMULATOR()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x80;
+
+    cpu.MEMORY[0xFFFC] = LSR_ACCUMULATOR;
+
+    RUN_CPU(&cpu);
+    
+    printf("LSR Accumulator\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x40);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 2);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+void TEST_LSR_ZERO_PAGE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE2] = 0x80;
+
+    cpu.MEMORY[0xFFFC] = LSR_ZERO_PAGE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("LSR Zero Page\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE2], 0x40);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 5);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+void TEST_LSR_ZERO_PAGE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE5] = 0x80;
+    cpu.REGISTER_INDEX_X = 0x03;
+
+    cpu.MEMORY[0xFFFC] = LSR_ZERO_PAGE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+
+    RUN_CPU(&cpu);
+    
+    printf("LSR Zero Page X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE5], 0x40);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+
+void TEST_LSR_ABSOLUTE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE2E5] = 0x0A;
+
+    cpu.MEMORY[0xFFFC] = LSR_ABSOLUTE;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("LSR Absolute\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE2E5], 0x05);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+void TEST_LSR_ABSOLUTE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0xE2E8] = 0x30;
+    cpu.REGISTER_INDEX_X = 0x03;
+
+    cpu.MEMORY[0xFFFC] = LSR_ABSOLUTE_X;
+    cpu.MEMORY[0xFFFD] = 0xE2;
+    cpu.MEMORY[0xFFFE] = 0xE5;
+
+    RUN_CPU(&cpu);
+    
+    printf("LSR Absolute X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0xE2E8], 0x18);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 7);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+void TEST_ROL_ACCUMULATOR()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x80;
+    cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = 1;
+
+    cpu.MEMORY[0xFFFC] = ROL_ACCUMULATOR;
+
+    RUN_CPU(&cpu);
+    
+    printf("ROL Accumulator\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0x01);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 2);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+void TEST_ROL_ZERO_PAGE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0x52] = 0x00;
+    cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = 1;
+
+    cpu.MEMORY[0xFFFC] = ROL_ZERO_PAGE;
+    cpu.MEMORY[0xFFFD] = 0x52;
+
+    RUN_CPU(&cpu);
+    
+    printf("ROL Zero Page\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0x52], 0x01);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 5);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+void TEST_ROL_ZERO_PAGE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0x5A] = 0x07;
+    cpu.REGISTER_INDEX_X = 0x08;
+    cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = 1;
+
+    cpu.MEMORY[0xFFFC] = ROL_ZERO_PAGE_X;
+    cpu.MEMORY[0xFFFD] = 0x52;
+
+    RUN_CPU(&cpu);
+    
+    printf("ROL Zero Page X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0x5A], 0x0F);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+void TEST_ROL_ABSOLUTE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0x5253] = 0x08;
+    cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = 1;
+
+    cpu.MEMORY[0xFFFC] = ROL_ABSOLUTE;
+    cpu.MEMORY[0xFFFD] = 0x52;
+    cpu.MEMORY[0xFFFE] = 0x53;
+
+    RUN_CPU(&cpu);
+    
+    printf("ROL Absolute\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0x5253], 0x11);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+void TEST_ROL_ABSOLUTE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0x5258] = 0x06;
+    cpu.REGISTER_INDEX_X = 0x05;
+    cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = 1;
+
+    cpu.MEMORY[0xFFFC] = ROL_ABSOLUTE_X;
+    cpu.MEMORY[0xFFFD] = 0x52;
+    cpu.MEMORY[0xFFFE] = 0x53;
+
+    RUN_CPU(&cpu);
+    
+    printf("ROL Absolute X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0x5258], 0x0D);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 7);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+
+void TEST_ROR_ACCUMULATOR()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.REGISTER_ACCUMULATOR = 0x80;
+    cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = 1;
+
+    cpu.MEMORY[0xFFFC] = ROR_ACCUMULATOR;
+
+    RUN_CPU(&cpu);
+    
+    printf("ROR Accumulator\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.REGISTER_ACCUMULATOR, 0xC0);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 2);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1); 
+}
+
+void TEST_ROR_ZERO_PAGE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0x52] = 0x00;
+    cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = 1;
+
+    cpu.MEMORY[0xFFFC] = ROR_ZERO_PAGE;
+    cpu.MEMORY[0xFFFD] = 0x52;
+
+    RUN_CPU(&cpu);
+    
+    printf("ROR Zero Page\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0x52], 0x80);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 5);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1); 
+}
+
+void TEST_ROR_ZERO_PAGE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0x5A] = 0x07;
+    cpu.REGISTER_INDEX_X = 0x08;
+    cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = 1;
+
+    cpu.MEMORY[0xFFFC] = ROR_ZERO_PAGE_X;
+    cpu.MEMORY[0xFFFD] = 0x52;
+
+    RUN_CPU(&cpu);
+    
+    printf("ROR Zero Page X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0x5A], 0x83);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 1); 
+}
+
+void TEST_ROR_ABSOLUTE()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0x5253] = 0x08;
+    cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = 0;
+
+    cpu.MEMORY[0xFFFC] = ROR_ABSOLUTE;
+    cpu.MEMORY[0xFFFD] = 0x52;
+    cpu.MEMORY[0xFFFE] = 0x53;
+
+    RUN_CPU(&cpu);
+    
+    printf("ROR Absolute\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0x5253], 0x04);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 6);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 0);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+
+
+
+void TEST_ROR_ABSOLUTE_X()
+{
+    CPU6502_T cpu;
+
+    RESET_CPU(&cpu);
+
+    cpu.MEMORY[0x5258] = 0x07;
+    cpu.REGISTER_INDEX_X = 0x05;
+    cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = 0;
+
+    cpu.MEMORY[0xFFFC] = ROR_ABSOLUTE_X;
+    cpu.MEMORY[0xFFFD] = 0x52;
+    cpu.MEMORY[0xFFFE] = 0x53;
+
+    RUN_CPU(&cpu);
+    
+    printf("ROR Absolute X\n");
+
+    printf("\t");
+    EQUAL("REGISTER",cpu.MEMORY[0x5258], 0x03);
+    printf("\t");
+    EQUAL("CYCLE",cpu.TOTAL_CYCLE_COUNT, 7);
+    printf("\t");
+    EQUAL("CARRY FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY, 1);
+    printf("\t");
+    EQUAL("ZERO FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO, 0);
+    printf("\t");
+    EQUAL("NEGATIVE FLAG",cpu.REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE, 0); 
+}
+
+
 void TEST_LDA()
 {
     TEST_LDA_IMMEDIATE();
@@ -2439,10 +3659,92 @@ void TEST_SBC()
     TEST_SBC_INDIRECT_Y();
 }
 
+void TEST_CMP()
+{
+    TEST_CMP_IMMEDIATE();
+    TEST_CMP_ZERO_PAGE();
+    TEST_CMP_ZERO_PAGE_X();
+    TEST_CMP_ABSOLUTE();
+    TEST_CMP_ABSOLUTE_X();
+    TEST_CMP_ABSOLUTE_Y();
+    TEST_CMP_INDIRECT_X();
+    TEST_CMP_INDIRECT_Y();
+}
+
+void TEST_CPX()
+{
+    TEST_CPX_IMMEDIATE();
+    TEST_CPX_ZERO_PAGE();
+    TEST_CPX_ABSOLUTE();
+
+}
+
+void TEST_CPY()
+{
+    TEST_CPY_IMMEDIATE();
+    TEST_CPY_ZERO_PAGE();
+    TEST_CPY_ABSOLUTE();
+}
+
 void TEST_BIT()
 {
     TEST_BIT_ZERO_PAGE();
     TEST_BIT_ABSOLUTE();
+}
+
+void TEST_DEC()
+{
+    TEST_DEC_ZERO_PAGE();
+    TEST_DEC_ZERO_PAGE_X();
+    TEST_DEC_ABSOLUTE();
+    TEST_DEC_ABSOLUTE_X();
+
+}
+
+void TEST_INC()
+{
+    TEST_INC_ZERO_PAGE();
+    TEST_INC_ZERO_PAGE_X();
+    TEST_INC_ABSOLUTE();
+    TEST_INC_ABSOLUTE_X();
+}
+
+void TEST_ASL()
+{
+    TEST_ASL_ACCUMULATOR();
+    TEST_ASL_ZERO_PAGE();
+    TEST_ASL_ZERO_PAGE_X();
+    TEST_ASL_ABSOLUTE();
+    TEST_ASL_ABSOLUTE_X();
+}
+
+
+void TEST_LSR()
+{
+    TEST_LSR_ACCUMULATOR();
+    TEST_LSR_ZERO_PAGE();
+    TEST_LSR_ZERO_PAGE_X();
+    TEST_LSR_ABSOLUTE();
+    TEST_LSR_ABSOLUTE_X();
+}
+
+
+void TEST_ROL()
+{
+    TEST_ROL_ACCUMULATOR();
+    TEST_ROL_ZERO_PAGE();
+    TEST_ROL_ZERO_PAGE_X();
+    TEST_ROL_ABSOLUTE();
+    TEST_ROL_ABSOLUTE_X();
+}
+
+void TEST_ROR()
+{
+    TEST_ROR_ACCUMULATOR();
+    TEST_ROR_ZERO_PAGE();
+    TEST_ROR_ZERO_PAGE_X();
+    TEST_ROR_ABSOLUTE();
+    TEST_ROR_ABSOLUTE_X();
 }
 
 void TEST_TOTAL_INSTRUCTION()
@@ -2474,6 +3776,25 @@ void TEST_TOTAL_INSTRUCTION()
 
     //TEST_ADC();
 
-    TEST_SBC();
+    //TEST_SBC();
+
+    //TEST_CMP();
+
+    //TEST_CPX();
+
+    //TEST_CPY();
+
+    //TEST_DEC();
+
+    //TEST_INC();
+
+    //TEST_INX_IMPLIED();
+    //TEST_INY_IMPLIED();
+
+    //TEST_ASL();
+    //TEST_LSR();
+
+    //TEST_ROL();
+    TEST_ROR();
 }
 #endif

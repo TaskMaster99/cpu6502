@@ -258,6 +258,10 @@ void READ_FROM_WORD_ADDRESS(CPU6502_T* cpu, WORD* Address, BYTE* data);
 void WRITE_TO_BYTE_ADDRESS(CPU6502_T* cpu, BYTE* Address, BYTE* data);
 void WRITE_TO_WORD_ADDRESS(CPU6502_T* cpu, WORD* Address, BYTE* data);
 
+void ABSOLUTE_MODE(CPU6502_T* cpu, BYTE* data, unsigned int type);
+void ABSOLUTE_INDEX_MODE(CPU6502_T* cpu, BYTE* index, BYTE* data, unsigned int type);
+
+
 void RUN_CPU(CPU6502_T* cpu);
 
 #endif

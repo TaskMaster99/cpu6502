@@ -46,6 +46,7 @@ inline void FETCHING_BYTE(CPU6502_T* cpu, BYTE* data)
     cpu->REGISTER_PROGRAM_COUNTER ++;
     cpu->TOTAL_CYCLE_COUNT++;
 
+
 }
 
 inline void FETCHING_WORD(CPU6502_T* cpu, WORD* data)
@@ -68,6 +69,7 @@ inline void READ_FROM_BYTE_ADDRESS(CPU6502_T* cpu, BYTE* Address, BYTE* data)
 {
     *data = cpu->MEMORY[*Address];
     cpu->TOTAL_CYCLE_COUNT++;
+
 }
 
 inline void READ_FROM_WORD_ADDRESS(CPU6502_T* cpu, WORD* Address, BYTE* data)
@@ -105,6 +107,12 @@ inline void ZERO_PAGE_MODE(CPU6502_T* cpu, BYTE* data, unsigned int type)
 
 }
 
+inline void DIRECT_ZERO_PAGE_MODE_WRITE(CPU6502_T* cpu, BYTE* ZeroPageAdress, BYTE* data)
+{
+    cpu->TOTAL_CYCLE_COUNT++;
+    WRITE_TO_BYTE_ADDRESS(cpu, ZeroPageAdress, data);
+}
+
 inline void ZERO_PAGE_INDEX_MODE(CPU6502_T* cpu, BYTE* index, BYTE* data, unsigned int type)
 {
     BYTE ZeroPageAddress;
@@ -119,6 +127,14 @@ inline void ZERO_PAGE_INDEX_MODE(CPU6502_T* cpu, BYTE* index, BYTE* data, unsign
         WRITE_TO_BYTE_ADDRESS(cpu, &ZeroPageAddress, data);
 }
 
+inline void DIRECT_ZERO_PAGE_INDEX_MODE_WRITE(CPU6502_T* cpu, BYTE* index, BYTE* ZeroPageAddress, BYTE* data)
+{
+    *ZeroPageAddress += *index;
+    cpu->TOTAL_CYCLE_COUNT++;
+
+    WRITE_TO_BYTE_ADDRESS(cpu, ZeroPageAddress, data);
+}
+
 inline void ABSOLUTE_MODE(CPU6502_T* cpu, BYTE* data, unsigned int type)
 {
     WORD Address;
@@ -128,6 +144,11 @@ inline void ABSOLUTE_MODE(CPU6502_T* cpu, BYTE* data, unsigned int type)
         READ_FROM_WORD_ADDRESS(cpu, &Address, data);
     else
         WRITE_TO_WORD_ADDRESS(cpu, &Address, data);
+}
+
+inline void DIRECT_ABSOLUTE_MODE_WRITE(CPU6502_T* cpu, WORD* Address, BYTE* data)
+{
+    WRITE_TO_WORD_ADDRESS(cpu, Address, data);
 }
 
 inline void ABSOLUTE_INDEX_MODE(CPU6502_T* cpu, BYTE* index, BYTE* data, unsigned int type)
@@ -151,7 +172,32 @@ inline void ABSOLUTE_INDEX_MODE(CPU6502_T* cpu, BYTE* index, BYTE* data, unsigne
             WRITE_TO_WORD_ADDRESS(cpu, &Address, data);
         }
 
+}
 
+inline void ABSOLUTE_INDEX_MODE_(CPU6502_T* cpu, BYTE* index, BYTE* data, unsigned int type)
+{
+    WORD Address;
+    FETCHING_WORD(cpu, &Address);
+    Address += *index;
+    cpu->TOTAL_CYCLE_COUNT++;
+
+    if(type)
+    {    
+        READ_FROM_WORD_ADDRESS(cpu, &Address, data);
+    }
+    else
+    {
+        WRITE_TO_WORD_ADDRESS(cpu, &Address, data);
+    }
+
+}
+
+inline void DIRECT_ABSOLUTE_INDEX_MODE_WRITE(CPU6502_T* cpu, BYTE* index, WORD* Address, BYTE* data)
+{
+    *Address += *index;
+    cpu->TOTAL_CYCLE_COUNT++;
+
+    WRITE_TO_WORD_ADDRESS(cpu, Address, data);
 }
 
 inline void INDIRECT_X_MODE(CPU6502_T* cpu, BYTE* data, unsigned int type)
@@ -1142,157 +1188,717 @@ void RUN_CPU(CPU6502_T* cpu)
             case CMP_IMMEDIATE:
             {
                 BYTE OperandAddress;
-                IMMEDIATE_MODE(&cpu, &OperandAddress);
+                IMMEDIATE_MODE(cpu, &OperandAddress);
+
+                BYTE result = cpu->REGISTER_ACCUMULATOR - cpu->MEMORY[OperandAddress];
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= cpu->MEMORY[OperandAddress]);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == cpu->MEMORY[OperandAddress]);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
             }
             break;
 
             case CMP_ZERO_PAGE:
             {
                 BYTE Operand;
-                ZERO_PAGE_MODE(&cpu, &Operand, READ);
+                ZERO_PAGE_MODE(cpu, &Operand, READ);
+
+                BYTE result = cpu->REGISTER_ACCUMULATOR - Operand;
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= Operand);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == Operand);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
             }
             break;
 
             case CMP_ZERO_PAGE_X:
             {
                 BYTE Operand;
-                ZERO_PAGE_INDEX_MODE(&cpu, PTR_X, &Operand, READ);
+                ZERO_PAGE_INDEX_MODE(cpu, PTR_X, &Operand, READ);
+
+                BYTE result = cpu->REGISTER_ACCUMULATOR - Operand;
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= Operand);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == Operand);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
             }
             break;
 
             case CMP_ABSOLUTE:
             {
                 BYTE Operand;
-                ABSOLUTE_MODE(&cpu, &Operand, READ);
+                ABSOLUTE_MODE(cpu, &Operand, READ);
+
+                BYTE result = cpu->REGISTER_ACCUMULATOR - Operand;
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= Operand);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == Operand);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
             }
             break;
 
             case CMP_ABSOLUTE_X:
             {
                 BYTE Operand;
-                ABSOLUTE_INDEX_MODE(&cpu, PTR_X, &Operand, READ);
+                ABSOLUTE_INDEX_MODE(cpu, PTR_X, &Operand, READ);
+
+                BYTE result = cpu->REGISTER_ACCUMULATOR - Operand;
+                
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= Operand);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == Operand);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
             }
             break;
 
             case CMP_ABSOLUTE_Y:
             {
                 BYTE Operand;
-                ABSOLUTE_INDEX_MODE(&cpu, PTR_Y, &Operand, READ);
+                ABSOLUTE_INDEX_MODE(cpu, PTR_Y, &Operand, READ);
+
+                BYTE result = cpu->REGISTER_ACCUMULATOR - Operand;
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= Operand);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == Operand);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
             }
             break;
 
             case CMP_INDIRECT_X:
             {
                 BYTE Operand;
-                INDIRECT_X_MODE(&cpu, &Operand, READ);
+                INDIRECT_X_MODE(cpu, &Operand, READ);
+
+                BYTE result = cpu->REGISTER_ACCUMULATOR - Operand;
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= Operand);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == Operand);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
             }
             break;
 
             case CMP_INDIRECT_Y:
             {
                 BYTE Operand;
-                INDIRECT_Y_MODE(&cpu, &Operand, READ);
+                INDIRECT_Y_MODE(cpu, &Operand, READ);
+
+                BYTE result = cpu->REGISTER_ACCUMULATOR - Operand;
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >= Operand);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_ACCUMULATOR == Operand);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_ACCUMULATOR >> 7);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
             }
             break;
 
             case CPX_IMMEDIATE:
             {
                 BYTE OperandAddress;
-                IMMEDIATE_MODE(&cpu, &OperandAddress);
+                IMMEDIATE_MODE(cpu, &OperandAddress);
+
+                BYTE result = cpu->REGISTER_INDEX_X - cpu->MEMORY[OperandAddress];
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_INDEX_X >= cpu->MEMORY[OperandAddress]);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_INDEX_X == cpu->MEMORY[OperandAddress]);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_X >> 7);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
             }
             break;
 
             case CPX_ZERO_PAGE:
             {
                 BYTE Operand;
-                ZERO_PAGE_MODE(&cpu, &Operand, READ);
+                ZERO_PAGE_MODE(cpu, &Operand, READ);
+
+                BYTE result = cpu->REGISTER_INDEX_X - Operand;
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_INDEX_X >= Operand);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_INDEX_X == Operand);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_X >> 7);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
             }
             break;
 
             case CPX_ABSOLUTE:
             {
                 BYTE Operand;
-                ABSOLUTE_MODE(&cpu, &Operand, READ);
+                ABSOLUTE_MODE(cpu, &Operand, READ);
+
+                BYTE result = cpu->REGISTER_INDEX_X - Operand;
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_INDEX_X >= Operand);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_INDEX_X == Operand);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_X >> 7);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
             }
             break;
 
             case CPY_IMMEDIATE:
             {
                 BYTE OperandAddress;
-                IMMEDIATE_MODE(&cpu, &OperandAddress);
+                IMMEDIATE_MODE(cpu, &OperandAddress);
+
+                BYTE result = cpu->REGISTER_INDEX_Y - cpu->MEMORY[OperandAddress];
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_INDEX_Y >= cpu->MEMORY[OperandAddress]);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_INDEX_Y == cpu->MEMORY[OperandAddress]);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_Y >> 7);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
             }
             break;
 
             case CPY_ZERO_PAGE:
             {
                 BYTE Operand;
-                ZERO_PAGE_MODE(&cpu, &Operand, READ);
+                ZERO_PAGE_MODE(cpu, &Operand, READ);
+
+                BYTE result = cpu->REGISTER_INDEX_Y - Operand;
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_INDEX_Y >= Operand);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_INDEX_Y == Operand);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_Y >> 7);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
             }
             break;
 
             case CPY_ABSOLUTE:
             {
                 BYTE Operand;
-                ABSOLUTE_MODE(&cpu, &Operand, READ);
+                ABSOLUTE_MODE(cpu, &Operand, READ);
+
+                BYTE result = cpu->REGISTER_INDEX_Y - Operand;
 
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_INDEX_Y >= Operand);
                 cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO  = (cpu->REGISTER_INDEX_Y == Operand);
-                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_Y >> 7);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
             }
             break;  
 
+            case DEC_ZERO_PAGE:
+            {
+                BYTE DataAddress;
+                
+                FETCHING_BYTE(cpu, &DataAddress);
+
+                BYTE result = cpu->MEMORY[DataAddress] - 1;
+                cpu->TOTAL_CYCLE_COUNT++;
+
+                DIRECT_ZERO_PAGE_MODE_WRITE(cpu, &DataAddress,&result);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+
+            }
+            break;
+
+            case DEC_ZERO_PAGE_X:
+            {
+                BYTE DataAddress;
+                
+                FETCHING_BYTE(cpu, &DataAddress);
+
+                BYTE result = cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] - 1;
+                cpu->TOTAL_CYCLE_COUNT++;
+                cpu->TOTAL_CYCLE_COUNT++;
+
+                DIRECT_ZERO_PAGE_INDEX_MODE_WRITE(cpu, PTR_X, &DataAddress,&result);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+
+            }
+            break;
+
+            case DEC_ABSOLUTE:
+            {
+                WORD DataAddress;
+                
+                FETCHING_WORD(cpu, &DataAddress);
+
+                BYTE result = cpu->MEMORY[DataAddress] - 1;
+                cpu->TOTAL_CYCLE_COUNT++;
+                cpu->TOTAL_CYCLE_COUNT++;
+
+                DIRECT_ABSOLUTE_MODE_WRITE(cpu, &DataAddress,&result);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case DEC_ABSOLUTE_X:
+            {
+                WORD DataAddress;
+                
+                FETCHING_WORD(cpu, &DataAddress);
+
+                BYTE result = cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] - 1;
+                cpu->TOTAL_CYCLE_COUNT++;
+                cpu->TOTAL_CYCLE_COUNT++;
+
+                DIRECT_ABSOLUTE_INDEX_MODE_WRITE(cpu, PTR_X, &DataAddress,&result);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case INC_ZERO_PAGE:
+            {
+                BYTE DataAddress;
+                
+                FETCHING_BYTE(cpu, &DataAddress);
+
+                BYTE result = cpu->MEMORY[DataAddress] + 1;
+                cpu->TOTAL_CYCLE_COUNT++;
+
+                DIRECT_ZERO_PAGE_MODE_WRITE(cpu, &DataAddress,&result);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+
+            }
+            break;
+
+            case INC_ZERO_PAGE_X:
+            {
+                BYTE DataAddress;
+                
+                FETCHING_BYTE(cpu, &DataAddress);
+
+                BYTE result = cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] + 1;
+                cpu->TOTAL_CYCLE_COUNT++;
+                cpu->TOTAL_CYCLE_COUNT++;
+
+                DIRECT_ZERO_PAGE_INDEX_MODE_WRITE(cpu, PTR_X, &DataAddress,&result);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+
+            }
+            break;
+
+            case INC_ABSOLUTE:
+            {
+                WORD DataAddress;
+                
+                FETCHING_WORD(cpu, &DataAddress);
+
+                BYTE result = cpu->MEMORY[DataAddress] + 1;
+                cpu->TOTAL_CYCLE_COUNT++;
+                cpu->TOTAL_CYCLE_COUNT++;
+
+                DIRECT_ABSOLUTE_MODE_WRITE(cpu, &DataAddress,&result);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case INC_ABSOLUTE_X:
+            {
+                WORD DataAddress;
+                
+                FETCHING_WORD(cpu, &DataAddress);
+
+                BYTE result = cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] + 1;
+                cpu->TOTAL_CYCLE_COUNT++;
+                cpu->TOTAL_CYCLE_COUNT++;
+
+                DIRECT_ABSOLUTE_INDEX_MODE_WRITE(cpu, PTR_X, &DataAddress,&result);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case DEX_IMPLIED:
+            {                
+
+                cpu->REGISTER_INDEX_X -= 1;
+                cpu->TOTAL_CYCLE_COUNT += 2;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_INDEX_X == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_X >> 7);
+            }
+            break;
+
+            case DEY_IMPLIED:
+            {
+                cpu->REGISTER_INDEX_Y -= 1;
+                cpu->TOTAL_CYCLE_COUNT += 2;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_INDEX_Y == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_Y >> 7);
+            }
+            break;
+
+            case INX_IMPLIED:
+            {
+                cpu->REGISTER_INDEX_X += 1;
+
+                cpu->TOTAL_CYCLE_COUNT += 1;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_INDEX_X == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_X >> 7);
+            }
+            break;
+
+            case INY_IMPLIED:
+            {
+                cpu->REGISTER_INDEX_Y += 1;
+
+                cpu->TOTAL_CYCLE_COUNT += 1;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_INDEX_Y == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (cpu->REGISTER_INDEX_Y >> 7);
+            }
+            break;
+
+            case ASL_ACCUMULATOR:
+            {
+                WORD result = cpu->REGISTER_ACCUMULATOR << 1;
+                cpu->REGISTER_ACCUMULATOR = result;
+
+                cpu->TOTAL_CYCLE_COUNT++;
+                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (result >> 8);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case ASL_ZERO_PAGE:
+            {
+                BYTE DataAddress;
+                
+                FETCHING_BYTE(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress] << 1;
+                cpu->TOTAL_CYCLE_COUNT += 1;
+                DIRECT_ZERO_PAGE_MODE_WRITE(cpu, &DataAddress,(BYTE*)&result);
+                                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (result >> 8);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case ASL_ZERO_PAGE_X:
+            {
+                BYTE DataAddress;
+                
+                FETCHING_BYTE(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] << 1;
+                cpu->TOTAL_CYCLE_COUNT += 2;
+                DIRECT_ZERO_PAGE_INDEX_MODE_WRITE(cpu, PTR_X,&DataAddress,(BYTE*)&result);
+                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (result >> 8);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case ASL_ABSOLUTE:
+            {
+                WORD DataAddress;
+                
+                FETCHING_WORD(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress] << 1;
+                cpu->TOTAL_CYCLE_COUNT += 2;
+
+                DIRECT_ABSOLUTE_MODE_WRITE(cpu, &DataAddress,(BYTE*)&result);
+                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (result >> 8);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case ASL_ABSOLUTE_X:
+            {
+                WORD DataAddress;
+                
+                FETCHING_WORD(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] << 1;
+                cpu->TOTAL_CYCLE_COUNT += 2;
+
+                DIRECT_ABSOLUTE_INDEX_MODE_WRITE(cpu, PTR_X, &DataAddress,(BYTE*)&result);
+                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (result >> 8);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case LSR_ACCUMULATOR:
+            {
+                WORD result = cpu->REGISTER_ACCUMULATOR >> 1;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (result >> 0);
+
+
+                cpu->REGISTER_ACCUMULATOR = result;
+
+                cpu->TOTAL_CYCLE_COUNT++;
+                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case LSR_ZERO_PAGE:
+            {
+                BYTE DataAddress;
+                
+                FETCHING_BYTE(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress] >> 1;
+                cpu->TOTAL_CYCLE_COUNT += 1;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->MEMORY[DataAddress] >> 0);
+
+                DIRECT_ZERO_PAGE_MODE_WRITE(cpu, &DataAddress,(BYTE*)&result);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case LSR_ZERO_PAGE_X:
+            {
+                BYTE DataAddress;
+                
+                FETCHING_BYTE(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] >> 1;
+
+                cpu->TOTAL_CYCLE_COUNT += 2;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] >> 0);
+
+                DIRECT_ZERO_PAGE_INDEX_MODE_WRITE(cpu, PTR_X,&DataAddress,(BYTE*)&result);
+                
+                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case LSR_ABSOLUTE:
+            {
+                WORD DataAddress;
+                
+                FETCHING_WORD(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress] >> 1;
+                cpu->TOTAL_CYCLE_COUNT += 2;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->MEMORY[DataAddress] >> 0);
+
+
+                DIRECT_ABSOLUTE_MODE_WRITE(cpu, &DataAddress,(BYTE*)&result);
+                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case LSR_ABSOLUTE_X:
+            {
+                WORD DataAddress;
+                
+                FETCHING_WORD(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] >> 1;
+                cpu->TOTAL_CYCLE_COUNT += 2;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] >> 0);
+
+                DIRECT_ABSOLUTE_INDEX_MODE_WRITE(cpu, PTR_X, &DataAddress,(BYTE*)&result);
+                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case ROL_ACCUMULATOR:
+            {
+                WORD result = cpu->REGISTER_ACCUMULATOR << 1 | cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >> 7);
+
+                cpu->REGISTER_ACCUMULATOR = result;
+
+                cpu->TOTAL_CYCLE_COUNT++;
+                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case ROL_ZERO_PAGE:
+            {
+                BYTE DataAddress;
+                
+                FETCHING_BYTE(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress] << 1 | cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+                cpu->TOTAL_CYCLE_COUNT += 1;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->MEMORY[DataAddress] >> 7);
+
+                DIRECT_ZERO_PAGE_MODE_WRITE(cpu, &DataAddress,(BYTE*)&result);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case ROL_ZERO_PAGE_X:
+            {
+                BYTE DataAddress;
+                
+                FETCHING_BYTE(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] << 1 | cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+
+                
+                cpu->TOTAL_CYCLE_COUNT += 2;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] >> 7);
+
+                DIRECT_ZERO_PAGE_INDEX_MODE_WRITE(cpu, PTR_X,&DataAddress,(BYTE*)&result);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case ROL_ABSOLUTE:
+            {
+                WORD DataAddress;
+                
+                FETCHING_WORD(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress] << 1 | cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+                cpu->TOTAL_CYCLE_COUNT += 2;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->MEMORY[DataAddress] >> 7);
+
+
+                DIRECT_ABSOLUTE_MODE_WRITE(cpu, &DataAddress,(BYTE*)&result);
+                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case ROL_ABSOLUTE_X:
+            {
+                WORD DataAddress;
+                
+                FETCHING_WORD(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] << 1 | cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY;
+
+                cpu->TOTAL_CYCLE_COUNT += 2;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] >> 7);
+
+                DIRECT_ABSOLUTE_INDEX_MODE_WRITE(cpu, PTR_X, &DataAddress,(BYTE*)&result);
+                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case ROR_ACCUMULATOR:
+            {
+                WORD result = cpu->REGISTER_ACCUMULATOR >> 1 | (cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY << 7);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->REGISTER_ACCUMULATOR >> 0);
+
+                cpu->REGISTER_ACCUMULATOR = result;
+
+                cpu->TOTAL_CYCLE_COUNT++;
+                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (cpu->REGISTER_ACCUMULATOR == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case ROR_ZERO_PAGE:
+            {
+                BYTE DataAddress;
+                
+                FETCHING_BYTE(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress] >> 1 | (cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY << 7);
+                cpu->TOTAL_CYCLE_COUNT += 1;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->MEMORY[DataAddress] >> 0);
+
+                DIRECT_ZERO_PAGE_MODE_WRITE(cpu, &DataAddress,(BYTE*)&result);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case ROR_ZERO_PAGE_X:
+            {
+                BYTE DataAddress;
+                
+                FETCHING_BYTE(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] >> 1 | (cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY << 7);
+                
+                cpu->TOTAL_CYCLE_COUNT += 2;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] >> 0);
+
+                DIRECT_ZERO_PAGE_INDEX_MODE_WRITE(cpu, PTR_X,&DataAddress,(BYTE*)&result);
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case ROR_ABSOLUTE:
+            {
+                WORD DataAddress;
+                
+                FETCHING_WORD(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress] >> 1 | (cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY << 7);
+                cpu->TOTAL_CYCLE_COUNT += 2;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->MEMORY[DataAddress] >> 0);
+
+
+                DIRECT_ABSOLUTE_MODE_WRITE(cpu, &DataAddress,(BYTE*)&result);
+                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
+
+            case ROR_ABSOLUTE_X:
+            {
+                WORD DataAddress;
+                
+                FETCHING_WORD(cpu, &DataAddress);
+
+                WORD result = cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] >> 1 | (cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY << 7);
+
+                cpu->TOTAL_CYCLE_COUNT += 2;
+
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.CARRY = (cpu->MEMORY[DataAddress + cpu->REGISTER_INDEX_X] >> 0);
+
+                DIRECT_ABSOLUTE_INDEX_MODE_WRITE(cpu, PTR_X, &DataAddress,(BYTE*)&result);
+                
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.ZERO = (result == 0);
+                cpu->REGISTER_PROCESSOR_T.STATUS_FLAGS_T.NEGATIVE = (result >> 7);
+            }
+            break;
             default:
                 break;
         }
